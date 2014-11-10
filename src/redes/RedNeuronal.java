@@ -5,27 +5,27 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+/**
+ * Clase que modela una red neuronal de un número indeterminado de 
+ * entradas, una capa oculta con un número indeterminado de nodos
+ * y una única salida
+ * 
+ * @author Antonio Toro
+ */
 public class RedNeuronal 
-{
-	double x1,x2,x3,x4,x5,x6,x7,x8;
-	double z1,z2,z3,z4,z5,z6,z7,z8;
-	double f_z1,f_z2,f_z3,f_z4,f_z5,f_z6,f_z7,f_z8;
-	double y;
-	
-	public String nombre;
-	public ArrayList<ArrayList<Double>> pesos;
-	public ArrayList<Double> bias;
-	
-	String netFile;
+{	
+	public String name,
+	              netFile;
 	public int inputCount  = 0,
 	           hiddenCount = 0;
 	
-	double y_original = 0.0;
-	double error = 0.0;
+	public ArrayList<ArrayList<Double>> pesos;
+	public ArrayList<Double> bias;
 	
-	int numEjemplos;
-	
+	/**
+	 * Constructor de una red neuronal de una única salida.
+	 * @param netFile Archivo {@code .net} que describe la red
+	 */
 	public RedNeuronal(String netFile) {
 		this.netFile = netFile;
 		
@@ -44,7 +44,7 @@ public class RedNeuronal
 			saltarLineas(br,3);
 			
 			linea = br.readLine();
-			this.nombre = linea.split(":\\s+")[1];
+			this.name = linea.split(":\\s+")[1];
 
 			saltarLineas(br,23);
 			
@@ -94,6 +94,10 @@ public class RedNeuronal
 		} 
 	}
 	
+	/**
+	 * Ejecuta la red neuronal sobre los datos de un fichero.
+	 * @param patternFile Archivo de datos sobre el que lanzar la red neuronal
+	 */
 	public void ejecutar(String patternFile) {
 		String linea;
 		FileReader fr = null;
@@ -175,16 +179,4 @@ public class RedNeuronal
 		}
 	}
 
-	/**
-	 * MAIN
-	 * @param args Command line args
-	 */
-	public static void main(String[] args) {
-
-		RedNeuronal redEstandar = new RedNeuronal("ABALONE_STD.NET");
-		redEstandar.ejecutar("abalone.pat");
-
-		RedNeuronal redNormalizada = new RedNeuronal("ABALONE_NORM.NET");
-		redNormalizada.ejecutar("abalone-norm.pat");
-	}
 }
