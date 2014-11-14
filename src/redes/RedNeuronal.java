@@ -8,7 +8,10 @@ import java.util.ArrayList;
 /**
  * Clase que modela una red neuronal de un número indeterminado de 
  * entradas, una capa oculta con un número indeterminado de nodos
- * y una única salida
+ * y una única salida.
+ * <p>
+ * Nota: Para que el fichero {@code .net} se lea correctamente los pesos
+ * tienen que estar al revés ({@code 8: 1,89164,  7: 0,03796,  6:-0,47484,  5:-0,23870...}).
  * 
  * @author Antonio Toro
  */
