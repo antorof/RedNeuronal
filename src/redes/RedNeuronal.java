@@ -18,6 +18,7 @@ public class RedNeuronal
 	              netFile;
 	public int inputCount  = 0,
 	           hiddenCount = 0;
+	public final boolean normalized;
 	
 	public ArrayList<ArrayList<Double>> pesos;
 	public ArrayList<Double> bias;
@@ -26,8 +27,9 @@ public class RedNeuronal
 	 * Constructor de una red neuronal de una única salida.
 	 * @param netFile Archivo {@code .net} que describe la red
 	 */
-	public RedNeuronal(String netFile) {
+	public RedNeuronal(String netFile, boolean normalized) {
 		this.netFile = netFile;
+		this.normalized = normalized;
 		
 		pesos = new ArrayList<ArrayList<Double>>();
 		bias = new ArrayList<Double>();
@@ -107,7 +109,7 @@ public class RedNeuronal
 	 * Ejecuta la red neuronal sobre los datos de un fichero.
 	 * @param patternFile Archivo de datos sobre el que lanzar la red neuronal
 	 */
-	public void ejecutar(String patternFile) {
+	public Salida ejecutar(String patternFile) {
 		String linea;
 		FileReader fr = null;
 		BufferedReader br = null;
@@ -116,7 +118,8 @@ public class RedNeuronal
 		double[] hiddenValues = new double[hiddenCount];
 		double   outputValue,
 		         computedOutput,
-		         error = 0.0;
+		         error_2 = 0.0;
+		Salida salida = new Salida(this.name);
 		
 		try {
 			fr = new FileReader (patternFile);
@@ -159,30 +162,46 @@ public class RedNeuronal
 				// Calculamos el valor computado de salida
 				for (int i = 0; i < hiddenCount; i++) {
 					double tmpHiddenValue = 0.0;
-					
 					for (int j = 0; j < inputValues.length; j++) {
+//						if(i==1) System.out.println(inputValues[j]);
+						if(i==1) System.out.print(pesos.get(i).get(j)+" ");
 						tmpHiddenValue += inputValues[j] * pesos.get(i).get(j);
 					}
+					if(i==1) System.out.println("");
+//					if(i==1) 
+//						System.out.println(outputValue);
 					
-					tmpHiddenValue =  tmpHiddenValue + bias.get(i);
-//					hiddenValues[i] = 1.0/(1+Math.exp(-tmpHiddenValue)); // No funciona
-					hiddenValues[i] = Math.tanh(tmpHiddenValue);
+					hiddenValues[i] = tmpHiddenValue + bias.get(i);
+//					System.out.println("hdd: "+i+" - "+tmpHiddenValue);
 					
+					hiddenValues[i] = 1.0/(1.0+Math.exp(-hiddenValues[i]));
+//					hiddenValues[i] = Math.tanh(hiddenValues[i]);
+//					System.out.println("suma: "+hiddenValues[i]);
 					computedOutput += hiddenValues[i] * pesos.get(pesos.size()-1).get(i);
 				}
-				// Sumamos el BIAS de la salida
-				computedOutput += bias.get(bias.size()-1);
+
+				// Sumamos el BIAS de la salida si la red es normalizada
+				if (normalized) {
+					computedOutput += bias.get(bias.size()-1);
+					computedOutput = Math.tanh(computedOutput);
+				}
 				
 				// Sumamos el error
-				error += Math.pow(computedOutput-outputValue,2);
-				//System.out.println(computedOutput+"-"+outputValue);
+				error_2 += Math.pow(computedOutput-outputValue,2);
+//				System.out.println(computedOutput+"-"+outputValue);
 			}
+
+			salida.error = Math.sqrt(error_2);
+			salida.error_2 = error_2;
+			salida.samples = numEjemplos;
 			
-			System.out.println("Error cuadrático medio: "+error/numEjemplos);
+//			System.out.println("Error cuadrático medio: "+error_2/numEjemplos);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		return salida;
 	}
 	
 	/**
@@ -197,6 +216,68 @@ public class RedNeuronal
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Imprime por pantalla los pesos de la red
+	 */
+	public void printPesos() {
+		for (ArrayList<Double> arrayList : pesos) {
+			for (Double db : arrayList) {
+				System.out.print(db+" ");
+			}
+			System.out.println("");
+		}
+	}
+	
+	/**
+	 * Imprime por pantalla los bias de la red
+	 */
+	public void printBias() {
+		for (Double db : bias) {
+			System.out.print(db+" ");
+		}
+		System.out.println("");
+	}
+	
+	/**
+	 * Clase que modela la salida de la ejecución de la red neuronal sobre
+	 * un conjunto de datos.
+	 * 
+	 * @author Antonio Toro
+	 */
+	public class Salida {
+		public double error   = 0.0,
+		              error_2 = 0.0;
+		public int    samples = 0;
+		public String name;
+		
+		public Salida(String name) {
+			this.name = name;
+		}
+		
+		@Override
+		public String toString() {
+			String str = "";
+
+			str += this.name + "\n";
+			str += " Error total: " + error + "\n";
+			str += " Error total medio: " + error/samples + "\n";
+			str += " Error cuadrático: " + error_2 + "\n";
+			str += " Error cuadrático medio: " + error_2/samples + "\n";
+			
+			return str;
+		}
+		
+		public Salida desnormalizar(double min, double max) {
+			Salida out = new Salida(this.name+"_desnormalizada");
+
+			out.error   = this.error * (max-min) + min;
+			out.error_2 = this.error_2 * (max-min) + min;
+			out.samples = this.samples;
+			
+			return out;
 		}
 	}
 
