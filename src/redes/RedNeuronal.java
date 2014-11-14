@@ -27,8 +27,10 @@ public class RedNeuronal
 	public ArrayList<Double> bias;
 	
 	/**
-	 * Constructor de una red neuronal de una única salida.
+	 * Constructor de una red neuronal de una &uacute;nica salida.
 	 * @param netFile Archivo {@code .net} que describe la red
+	 * @param normalized Indicar {@code true} o {@code false} seg&uacute;n est&eacute;
+	 *                   normalizada o no la red neuronal
 	 */
 	public RedNeuronal(String netFile, boolean normalized) {
 		this.netFile = netFile;
