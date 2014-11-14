@@ -18,10 +18,10 @@ public class Main {
 //		System.out.println(out3.desnormalizar(1.0, 29.0));
 		System.out.println(">>>>");
 		RedNeuronal redStdLB = new RedNeuronal("red_abalone.net", false);
-		redStdLB.printPesos();
-		redStdLB.printBias();
-//		RedNeuronal.Salida outStdLB = redStdLB.ejecutar("abalone.pat");
-//		System.out.println(outStdLB);
+//		redStdLB.printPesos();
+//		redStdLB.printBias();
+		RedNeuronal.Salida outStdLB = redStdLB.ejecutar("abalone.pat");
+		System.out.println(outStdLB);
 	}
 
 }

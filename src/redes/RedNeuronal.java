@@ -114,6 +114,8 @@ public class RedNeuronal
 		FileReader fr = null;
 		BufferedReader br = null;
 		int numEjemplos, numInputs;
+		ArrayList<Double> salidasComp = new ArrayList<Double>();
+		ArrayList<Double> salidas = new ArrayList<Double>();
 		double[] inputValues  = new double[inputCount];
 		double[] hiddenValues = new double[hiddenCount];
 		double   outputValue,
@@ -158,44 +160,73 @@ public class RedNeuronal
 				}
 				// Leemos la salida
 				outputValue = Double.parseDouble(lineaSeparada[lineaSeparada.length-1]);
+//				salidas.add(outputValue);
 
 				// Calculamos el valor computado de salida
 				for (int i = 0; i < hiddenCount; i++) {
 					double tmpHiddenValue = 0.0;
 					for (int j = 0; j < inputValues.length; j++) {
 //						if(i==1) System.out.println(inputValues[j]);
-						if(i==1) System.out.print(pesos.get(i).get(j)+" ");
+//						if(i==1) System.out.print(pesos.get(i).get(j)+" ");
 						tmpHiddenValue += inputValues[j] * pesos.get(i).get(j);
+//						if(i==0 && j==0) {
+//							System.out.print("ent: ");
+//							for (double d : inputValues) {
+//								System.out.print(d+" ");
+//							} 
+//							System.out.print("\npesos: ");
+//							for (double d : pesos.get(i)) {
+//								System.out.print(d+" ");
+//							} 
+							
+//							System.out.println("sum: "+tmpHiddenValue);
+//							System.out.print("ent: "+inputValues[j]);
+//							System.out.println("pesos: "+pesos.get(i).get(j));
+//						}
 					}
-					if(i==1) System.out.println("");
+//					if(i==0) 
+//						System.out.println("\nsum: "+tmpHiddenValue);
+//					if(i==1) System.out.println("");
 //					if(i==1) 
 //						System.out.println(outputValue);
 					
 					hiddenValues[i] = tmpHiddenValue + bias.get(i);
-//					System.out.println("hdd: "+i+" - "+tmpHiddenValue);
 					
 					hiddenValues[i] = 1.0/(1.0+Math.exp(-hiddenValues[i]));
-//					hiddenValues[i] = Math.tanh(hiddenValues[i]);
-//					System.out.println("suma: "+hiddenValues[i]);
+					
+//					System.out.println("fin: "+hiddenValues[i]);
+					
 					computedOutput += hiddenValues[i] * pesos.get(pesos.size()-1).get(i);
-				}
 
+//					if(i==0) 
+//						for (double d : hiddenValues) {
+//							System.out.println(d+" ");
+//						} 
+				}
+//				System.out.println("fin: "+computedOutput);
 				// Sumamos el BIAS de la salida si la red es normalizada
 				if (normalized) {
 					computedOutput += bias.get(bias.size()-1);
-					computedOutput = Math.tanh(computedOutput);
+					computedOutput = 1.0/(1.0+Math.exp(-computedOutput));
 				}
-				
+
+//				System.out.println("output: "+outputValue);
 				// Sumamos el error
+//				salidasComp.add(computedOutput);
 				error_2 += Math.pow(computedOutput-outputValue,2);
-//				System.out.println(computedOutput+"-"+outputValue);
 			}
 
 			salida.error = Math.sqrt(error_2);
 			salida.error_2 = error_2;
 			salida.samples = numEjemplos;
 			
-//			System.out.println("Error cuadrático medio: "+error_2/numEjemplos);
+//			salida.error_2 = 0.0;
+//			for (int k = 0; k < numEjemplos; k++) {
+//				System.out.println(salidasComp.get(k)+"\t-\t"+salidas.get(k));
+//				salida.error_2 += Math.pow(salidasComp.get(k)-salidas.get(k),2);
+//			}
+			
+			System.out.println("Error cuadrático medio: "+error_2/numEjemplos);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
