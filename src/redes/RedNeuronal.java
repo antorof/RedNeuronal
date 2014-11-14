@@ -94,11 +94,11 @@ public class RedNeuronal
 			// Ahora leemos los pesos de la capa oculta y del nodo de salida
 			for (int i = 0; i < hiddenCount+1; i++) { // hiddenCount+1 por el nodo de salida
 				linea = br.readLine();
-				String[] arr = linea.split(",*\\s*[0-9]+:\\s*"); 
+				String[] partes = linea.split(",*\\s*[0-9]+:\\s*"); 
 				
 				pesos.add(new ArrayList<Double>());
-				for (int j = arr.length-1; j > 0; j--) {
-					String peso = arr[j].trim();
+				for (int j = partes.length-1; j > 0; j--) {
+					String peso = partes[j].trim();
 					pesos.get(i).add(Double.parseDouble(peso.trim().replace(',','.')));
 				}
 			}

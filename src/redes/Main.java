@@ -17,7 +17,7 @@ public class Main {
 		System.out.println(out3);
 		System.out.println(out3.desnormalizar(1.0, 29.0));
 
-		RedNeuronal redStdLB = new RedNeuronal("red_abalone.net", false);
+		RedNeuronal redStdLB = new RedNeuronal("red_abalone_LB_inv.net", false);
 		RedNeuronal.Salida outStdLB = redStdLB.ejecutar("abalone.pat");
 		System.out.println(outStdLB);
 	}
