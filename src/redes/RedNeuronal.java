@@ -122,33 +122,41 @@ public class RedNeuronal
 			fr = new FileReader (patternFile);
 			br = new BufferedReader(fr);
 
+			// Saltamos 3 lineas
 			saltarLineas(br,3);
 
+			// Cogemos el numero de muestras
 			linea = br.readLine();
 			numEjemplos = Integer.parseInt( linea.split("\\s+")[4] );
 			
+			// Cogemos el numero de entradas
 			linea = br.readLine();
 			numInputs = Integer.parseInt( linea.split("\\s+")[5] );
 
+			// Si no coinciden el numero de entradas de la red y del archivo de muestras se sale
 			if (numInputs != this.inputCount) {
 				System.err.println("Number of inputs in pattern file ("+numInputs+") does "
 						+ "not match with number of inputs of the net ("+inputCount+")");
 				System.exit(1);
 			}
-				
+			
+			// Salta 2 lineas
 			saltarLineas(br,2);
 			
+			// Leemos las muestras
 			while( (linea=br.readLine()) != null )
 			{
 				String[] lineaSeparada = linea.split("\\t");
 				computedOutput = 0.0;
 				
+				// Leemos las entradas
 				for (int i = 0; i < inputCount; i++) {
 					inputValues[i] = Double.parseDouble(lineaSeparada[i]);
-
 				}
+				// Leemos la salida
 				outputValue = Double.parseDouble(lineaSeparada[lineaSeparada.length-1]);
 
+				// Calculamos el valor computado de salida
 				for (int i = 0; i < hiddenCount; i++) {
 					double tmpHiddenValue = 0.0;
 					
@@ -157,15 +165,17 @@ public class RedNeuronal
 					}
 					
 					tmpHiddenValue =  tmpHiddenValue + bias.get(i);
-//					hiddenValues[i] = 1.0/(1+Math.exp(-tmpHiddenValue));
+//					hiddenValues[i] = 1.0/(1+Math.exp(-tmpHiddenValue)); // No funciona
 					hiddenValues[i] = Math.tanh(tmpHiddenValue);
 					
 					computedOutput += hiddenValues[i] * pesos.get(pesos.size()-1).get(i);
 				}
+				// Sumamos el BIAS de la salida
 				computedOutput += bias.get(bias.size()-1);
 				
+				// Sumamos el error
 				error += Math.pow(computedOutput-outputValue,2);
-				System.out.println(computedOutput+"-"+outputValue);
+				//System.out.println(computedOutput+"-"+outputValue);
 			}
 			
 			System.out.println("Error cuadrático medio: "+error/numEjemplos);
@@ -181,12 +191,12 @@ public class RedNeuronal
 	 * @param numero N&uacute;mero de lineas a saltar
 	 */
 	private void saltarLineas(BufferedReader br, int numero) {
-		for (int i = 0; i < numero; i++) {
-			try {
+		try {
+			for (int i = 0; i < numero; i++) {
 				br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
