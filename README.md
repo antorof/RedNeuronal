@@ -8,6 +8,12 @@ Este programa lee los archivos directamente `.net` exportados por _JavaNNS_ para
 
 ## Modo de uso
 ```java
+// Creamos la red
 RedNeuronal redNeuronal = new RedNeuronal("fichero_red.net");
-redNeuronal.ejecutar("fichero_muestras.pat");
+
+// Capturamos la salida de la ejecución
+RedNeuronal.Salida salidaRed = redNeuronal.ejecutar("fichero_muestras.pat");
+
+// Vemos la salida
+System.out.println(salidaRed);
 ```
