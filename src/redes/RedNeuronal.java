@@ -35,20 +35,25 @@ public class RedNeuronal
 		FileReader fr = null;
 		BufferedReader br = null;
 		String linea;
-		ArrayList<String> strBffr = new ArrayList<String>();
+		ArrayList<String> lineasBias = new ArrayList<String>();
 		
 		try {
 			fr = new FileReader (netFile);
 			br = new BufferedReader(fr);
-
+			
+			// Saltamos las 3 primeras lineas
 			saltarLineas(br,3);
 			
+			// Cogemos el nombre de la red
 			linea = br.readLine();
 			this.name = linea.split(":\\s+")[1];
 
+			// Saltamos otras 3 lineas
 			saltarLineas(br,23);
 			
-			boolean pesosLeidos = false;
+			// Almacenamos las lineas que contienen los BIAS y contamos el numero de nodos
+			// de entrada y de capa oculta
+			boolean biasLeidos = false;
 			do {
 				linea = br.readLine();
 				
@@ -58,26 +63,29 @@ public class RedNeuronal
 				}
 				else if (arr[5].trim().equals("h")) {
 					hiddenCount++;
-					strBffr.add(linea);
+					lineasBias.add(linea);
 				}
 				else if (arr[5].trim().equals("o")) {
-					pesosLeidos = true;
-					strBffr.add(linea);
+					biasLeidos = true;
+					lineasBias.add(linea);
 				}
 				
-			} while (!pesosLeidos);
+			} while (!biasLeidos);
 			
-			for (int i = 0; i < strBffr.size(); i++) {
-				String str = strBffr.get(i);
+			// Ahora extraemos los BIAS de las lineas que hemos guardado
+			for (int i = 0; i < lineasBias.size(); i++) {
+				String str = lineasBias.get(i);
 				
 				String[] arr = str.split("\\|"); 
 				
 				bias.add( Double.parseDouble(arr[4].trim().replace(',','.')) );
 			}
 			
+			// Saltamos 7 lineas
 			saltarLineas(br, 7);
 			
-			for (int i = 0; i < hiddenCount+1; i++) {
+			// Ahora leemos los pesos de la capa oculta y del nodo de salida
+			for (int i = 0; i < hiddenCount+1; i++) { // hiddenCount+1 por el nodo de salida
 				linea = br.readLine();
 				String[] arr = linea.split(",*\\s*[0-9]+:\\s*"); 
 				
@@ -90,6 +98,7 @@ public class RedNeuronal
 			
 			
 		} catch (IOException e) {
+			System.err.println("No se ha podido crear la red");
 			e.printStackTrace();
 		} 
 	}
@@ -148,13 +157,15 @@ public class RedNeuronal
 					}
 					
 					tmpHiddenValue =  tmpHiddenValue + bias.get(i);
-					hiddenValues[i] = 1.0/(1+Math.exp(-tmpHiddenValue));
+//					hiddenValues[i] = 1.0/(1+Math.exp(-tmpHiddenValue));
+					hiddenValues[i] = Math.tanh(tmpHiddenValue);
 					
 					computedOutput += hiddenValues[i] * pesos.get(pesos.size()-1).get(i);
 				}
 				computedOutput += bias.get(bias.size()-1);
 				
 				error += Math.pow(computedOutput-outputValue,2);
+				System.out.println(computedOutput+"-"+outputValue);
 			}
 			
 			System.out.println("Error cuadrático medio: "+error/numEjemplos);

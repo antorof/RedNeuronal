@@ -7,11 +7,11 @@ public class Main {
 		RedNeuronal redEstandar = new RedNeuronal("ABALONE_STD.NET");
 		redEstandar.ejecutar("abalone.pat");
 
-		RedNeuronal redNormalizada = new RedNeuronal("ABALONE_NORM.NET");
-		redNormalizada.ejecutar("abalone-norm.pat");
-		
-		RedNeuronal redNormalizada2 = new RedNeuronal("ABALONE_NORMALIZADA.NET");
-		redNormalizada2.ejecutar("abalone-norm.pat");
+//		RedNeuronal redNormalizada = new RedNeuronal("ABALONE_NORM.NET");
+//		redNormalizada.ejecutar("abalone-norm.pat");
+//		
+//		RedNeuronal redNormalizada2 = new RedNeuronal("ABALONE_NORMALIZADA.NET");
+//		redNormalizada2.ejecutar("abalone-norm.pat");
 
 	}
 
