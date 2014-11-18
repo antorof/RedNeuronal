@@ -126,6 +126,7 @@ public class RedNeuronal
 		double   outputValue,
 		         computedOutput,
 		         error_2 = 0.0;
+		int contadorErrorClasif = 0;
 		Salida salida = new Salida(this.name);
 		
 		try {
@@ -181,19 +182,31 @@ public class RedNeuronal
 				}
 
 				// Sumamos el BIAS de la salida si la red es normalizada
-				if (false) { // Solo asi (false) cuadra con JavaNNS
-					computedOutput += bias.get(bias.size()-1);
-					computedOutput = 1.0/(1.0+Math.exp(-computedOutput));
-				}
+//				if (false) { // Solo asi (false) cuadra con JavaNNS
+//					computedOutput += bias.get(bias.size()-1);
+//					computedOutput = 1.0/(1.0+Math.exp(-computedOutput));
+//				}
 				
 				// Sumamos el error
 				error_2 += Math.pow(computedOutput-outputValue,2);
+				
+				// Contabilizamos el error de clasificacion
+				if(normalized) {
+					if(Math.round(normalize(computedOutput,1,29)) != Math.round(normalize(outputValue,1,29))) {
+						contadorErrorClasif++;
+					}
+				}
+				else
+					if(Math.round(computedOutput) != outputValue) {
+						contadorErrorClasif++;
+					}
 			}
 
 			salida.error = Math.sqrt(error_2);
 			salida.error_2 = error_2;
+			salida.errorClasif = contadorErrorClasif;
 			salida.samples = numEjemplos;
-			
+
 //			System.out.println("Error cuadrático medio: "+error_2/numEjemplos);
 			
 		} catch (IOException e) {
@@ -241,6 +254,17 @@ public class RedNeuronal
 	}
 	
 	/**
+	 * Normaliza un número entre dos valores.
+	 * @param number Número a normalizar
+	 * @param min    Mínimo valor entre los que normalizar
+	 * @param max    Máximo valor entre los que normalizar
+	 * @return El número normalizado
+	 */
+	public double normalize(double number, double min, double max) {
+		return number * (max-min) + min;
+	}
+	
+	/**
 	 * Clase que modela la salida de la ejecución de la red neuronal sobre
 	 * un conjunto de datos.
 	 * 
@@ -249,7 +273,8 @@ public class RedNeuronal
 	public class Salida {
 		public double error   = 0.0,
 		              error_2 = 0.0;
-		public int    samples = 0;
+		public int    errorClasif = 0,
+		              samples = 0;
 		public String name;
 		
 		public Salida(String name) {
@@ -265,6 +290,7 @@ public class RedNeuronal
 			str += " Error total medio: " + error/samples + "\n";
 			str += " Error cuadrático: " + error_2 + "\n";
 			str += " Error cuadrático medio: " + error_2/samples + "\n";
+			str += " Error de clasificación: " + 100.0*errorClasif/samples + "%\n";
 			
 			return str;
 		}
@@ -272,9 +298,10 @@ public class RedNeuronal
 		public Salida desnormalizar(double min, double max) {
 			Salida out = new Salida(this.name+"_desnormalizada");
 
-			out.error   = this.error * (max-min) + min;
-			out.error_2 = out.error * out.error;
-			out.samples = this.samples;
+			out.error       = this.error * (max-min) + min;
+			out.error_2     = out.error * out.error;
+			out.errorClasif = this.errorClasif;
+			out.samples     = this.samples;
 			
 			return out;
 		}
