@@ -98,6 +98,7 @@ public class RedNeuronal
 				
 				pesos.add(new ArrayList<Double>());
 				for (int j = partes.length-1; j > 0; j--) {
+//				for (int j = 1; j < partes.length; j++) { // Sustituir esta linea
 					String peso = partes[j].trim();
 					pesos.get(i).add(Double.parseDouble(peso.trim().replace(',','.')));
 				}
@@ -179,7 +180,7 @@ public class RedNeuronal
 				}
 
 				// Sumamos el BIAS de la salida si la red es normalizada
-				if (normalized) {
+				if (false) { // Solo asi (false) cuadra con JavaNNS
 					computedOutput += bias.get(bias.size()-1);
 					computedOutput = 1.0/(1.0+Math.exp(-computedOutput));
 				}
@@ -271,7 +272,7 @@ public class RedNeuronal
 			Salida out = new Salida(this.name+"_desnormalizada");
 
 			out.error   = this.error * (max-min) + min;
-			out.error_2 = this.error_2 * (max-min) + min;
+			out.error_2 = out.error * out.error;
 			out.samples = this.samples;
 			
 			return out;
