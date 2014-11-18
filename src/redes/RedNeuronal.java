@@ -11,7 +11,8 @@ import java.util.ArrayList;
  * y una única salida.
  * <p>
  * Nota: Para que el fichero {@code .net} se lea correctamente los pesos
- * tienen que estar al revés ({@code 8: 1,89164,  7: 0,03796,  6:-0,47484,  5:-0,23870...}).
+ * tienen que estar al revés ({@code 8: 1,89164,  7: 0,03796,  6:-0,47484,  5:-0,23870...});
+ * si no, hay que comentar la línea 100 y descomentar la 101.
  * 
  * @author Antonio Toro
  */
@@ -27,9 +28,9 @@ public class RedNeuronal
 	public ArrayList<Double> bias;
 	
 	/**
-	 * Constructor de una red neuronal de una &uacute;nica salida.
+	 * Constructor de una red neuronal de una única salida.
 	 * @param netFile Archivo {@code .net} que describe la red
-	 * @param normalized Indicar {@code true} o {@code false} seg&uacute;n est&eacute;
+	 * @param normalized Indicar {@code true} o {@code false} según esté
 	 *                   normalizada o no la red neuronal
 	 */
 	public RedNeuronal(String netFile, boolean normalized) {
@@ -203,9 +204,9 @@ public class RedNeuronal
 	}
 	
 	/**
-	 * Salta un n&uacute;mero de l&iacute;neas de un {@link BufferedReader}
-	 * @param br     Buffer del que se quiere saltar l&iacute;neas
-	 * @param numero N&uacute;mero de lineas a saltar
+	 * Salta un número de líneas de un {@link BufferedReader}
+	 * @param br     Buffer del que se quiere saltar líneas
+	 * @param numero Número de lineas a saltar
 	 */
 	private void saltarLineas(BufferedReader br, int numero) {
 		try {
