@@ -6,8 +6,8 @@ una capa oculta con un número indeterminado de nodos, y un único nodo de salid
 
 Este programa lee los archivos directamente `.net` exportados por _JavaNNS_ para crear la red neuronal.
 
-**Nota**: Para que el programa lea correctamente los `.net`, éste archivo debe contener los pesos de 
-manera inversa (`8: 1,89164,  7: 0,03796,  6:-0,47484,  5:-0,23870, etc.`)
+__IMPORTANTE__: Para que el programa lea correctamente los `.net`, éste archivo debe contener los __pesos de 
+manera inversa__ (`8: 1,89164,  7: 0,03796,  6:-0,47484,  5:-0,23870, etc.`).
 
 ## Modo de uso
 ```java
