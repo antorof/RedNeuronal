@@ -23,6 +23,8 @@ public class RedNeuronal
 	public int inputCount  = 0,
 	           hiddenCount = 0;
 	public final boolean normalized;
+	public double normalizationMin,
+	              normalizationMax;
 	
 	public ArrayList<ArrayList<Double>> pesos;
 	public ArrayList<Double> bias;
@@ -33,9 +35,18 @@ public class RedNeuronal
 	 * @param normalized Indicar {@code true} o {@code false} según esté
 	 *                   normalizada o no la red neuronal
 	 */
-	public RedNeuronal(String netFile, boolean normalized) {
+	public RedNeuronal(String netFile, boolean normalized, double... normalization) {
 		this.netFile = netFile;
 		this.normalized = normalized;
+		if (normalized) {
+			try{
+				this.normalizationMin = normalization[0];
+				this.normalizationMax = normalization[1];
+			} catch (ArrayIndexOutOfBoundsException e) {
+				System.err.println("Error al crear la red \nNo has indicado los valores minimo y maximo para desnormalizar");
+				System.exit(1);
+			}
+		}
 		
 		pesos = new ArrayList<ArrayList<Double>>();
 		bias = new ArrayList<Double>();
@@ -192,7 +203,7 @@ public class RedNeuronal
 				
 				// Contabilizamos el error de clasificacion
 				if(normalized) {
-					if(Math.round(normalize(computedOutput,1,29)) != Math.round(normalize(outputValue,1,29))) {
+					if(Math.round(desnormalizar(computedOutput)) != Math.round(desnormalizar(outputValue))) {
 						contadorErrorClasif++;
 					}
 				}
@@ -254,13 +265,22 @@ public class RedNeuronal
 	}
 	
 	/**
-	 * Normaliza un número entre dos valores.
-	 * @param number Número a normalizar
-	 * @param min    Mínimo valor entre los que normalizar
-	 * @param max    Máximo valor entre los que normalizar
-	 * @return El número normalizado
+	 * Desnormaliza un número según los parametros de normalización de la red
+	 * @param number Número a desnormalizar
+	 * @return El número desnormalizado
 	 */
-	public double normalize(double number, double min, double max) {
+	private double desnormalizar(double number) {
+		return desnormalizar(number, normalizationMin, normalizationMax);
+	}
+	
+	/**
+	 * Desnormaliza un número entre dos valores.
+	 * @param number Número a desnormalizar
+	 * @param min    Mínimo valor para desnormalizar
+	 * @param max    Máximo valor para desnormalizar
+	 * @return El número desnormalizado
+	 */
+	public static double desnormalizar(double number, double min, double max) {
 		return number * (max-min) + min;
 	}
 	
