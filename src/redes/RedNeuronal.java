@@ -22,7 +22,8 @@ public class RedNeuronal
 	              netFile;
 	public int inputCount  = 0,
 	           hiddenCount = 0;
-	public final boolean normalized;
+	public final boolean normalized,
+	                     discreteOutput;
 	public double normalizationMin,
 	              normalizationMax;
 	
@@ -35,9 +36,10 @@ public class RedNeuronal
 	 * @param normalized Indicar {@code true} o {@code false} según esté
 	 *                   normalizada o no la red neuronal
 	 */
-	public RedNeuronal(String netFile, boolean normalized, double... normalization) {
+	public RedNeuronal(String netFile, boolean discreteOutput, boolean normalized, double... normalization) {
 		this.netFile = netFile;
 		this.normalized = normalized;
+		this.discreteOutput = discreteOutput;
 		if (normalized) {
 			try{
 				this.normalizationMin = normalization[0];
@@ -136,6 +138,7 @@ public class RedNeuronal
 		double[] hiddenValues = new double[hiddenCount];
 		double   outputValue,
 		         computedOutput,
+		         error   = 0.0,
 		         error_2 = 0.0;
 		int contadorErrorClasif = 0;
 		Salida salida = new Salida(this.name);
@@ -193,27 +196,45 @@ public class RedNeuronal
 				}
 
 				// Sumamos el BIAS de la salida si la red es normalizada
-//				if (false) { // Solo asi (false) cuadra con JavaNNS
+//				if (normalized) { // Solo asi (false) cuadra con JavaNNS
 //					computedOutput += bias.get(bias.size()-1);
 //					computedOutput = 1.0/(1.0+Math.exp(-computedOutput));
 //				}
 				
-				// Sumamos el error
-				error_2 += Math.pow(computedOutput-outputValue,2);
-				
-				// Contabilizamos el error de clasificacion
+				// Contabilizamos el error de clasificacion y el error cuadratico
 				if(normalized) {
 					if(Math.round(desnormalizar(computedOutput)) != Math.round(desnormalizar(outputValue))) {
 						contadorErrorClasif++;
 					}
+					
+					double tmpErr;
+					if (discreteOutput) {
+						tmpErr = Math.round(desnormalizar(computedOutput))-Math.round(desnormalizar(outputValue));
+					}
+					else {
+						tmpErr = desnormalizar(computedOutput)-desnormalizar(outputValue);
+					}
+					error_2 += Math.pow(tmpErr,2);
+					error += Math.abs(tmpErr);
 				}
-				else
+				else { 
 					if(Math.round(computedOutput) != outputValue) {
 						contadorErrorClasif++;
 					}
+					
+					double tmpErr;
+					if (discreteOutput) {
+						tmpErr = Math.round(computedOutput)-outputValue;
+					}
+					else {
+						tmpErr = computedOutput-outputValue;
+					}
+					error_2 += Math.pow(tmpErr,2);
+					error += Math.abs(tmpErr);
+				}
 			}
 
-			salida.error = Math.sqrt(error_2);
+			salida.error = error;
 			salida.error_2 = error_2;
 			salida.errorClasif = contadorErrorClasif;
 			salida.samples = numEjemplos;
