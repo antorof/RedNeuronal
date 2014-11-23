@@ -138,8 +138,9 @@ public class RedNeuronal
 		double[] hiddenValues = new double[hiddenCount];
 		double   outputValue,
 		         computedOutput,
-		         error   = 0.0,
-		         error_2 = 0.0;
+		         error      = 0.0,
+		         error_2    = 0.0,
+		         error_aprx = 0.0;
 		int contadorErrorClasif = 0;
 		Salida salida = new Salida(this.name);
 		
@@ -214,6 +215,7 @@ public class RedNeuronal
 					else {
 						tmpErr = desnormalizar(computedOutput)-desnormalizar(outputValue);
 					}
+					error_aprx += Math.abs(Math.round(desnormalizar(computedOutput))-Math.round(desnormalizar(outputValue)));
 					error_2 += Math.pow(tmpErr,2);
 					error += Math.abs(tmpErr);
 				}
@@ -229,6 +231,7 @@ public class RedNeuronal
 					else {
 						tmpErr = computedOutput-outputValue;
 					}
+					error_aprx += Math.abs(Math.round(computedOutput)-outputValue);
 					error_2 += Math.pow(tmpErr,2);
 					error += Math.abs(tmpErr);
 				}
@@ -236,6 +239,7 @@ public class RedNeuronal
 
 			salida.error = error;
 			salida.error_2 = error_2;
+			salida.error_aprx = error_aprx;
 			salida.errorClasif = contadorErrorClasif;
 			salida.samples = numEjemplos;
 
@@ -312,8 +316,9 @@ public class RedNeuronal
 	 * @author Antonio Toro
 	 */
 	public class Salida {
-		public double error   = 0.0,
-		              error_2 = 0.0;
+		public double error       = 0.0,
+		              error_2     = 0.0,
+		              error_aprx  = 0.0;
 		public int    errorClasif = 0,
 		              samples = 0;
 		public String name;
@@ -331,6 +336,7 @@ public class RedNeuronal
 			str += " Error total medio: " + error/samples + "\n";
 			str += " Error cuadrático: " + error_2 + "\n";
 			str += " Error cuadrático medio: " + error_2/samples + "\n";
+			str += " Error de aproximación: " + error_aprx/samples + "\n";
 			str += " Error de clasificación: " + 100.0*errorClasif/samples + "%\n";
 			
 			return str;
